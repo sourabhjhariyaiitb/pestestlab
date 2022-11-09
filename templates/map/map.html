@@ -1,0 +1,384 @@
+{% extends 'map/base_map.html'%}
+{% load static %}
+{% block extra_resources%}
+<style>
+
+.popupimage {
+    height: 200px;
+    width: 300px;
+    overflow: hidden;
+    border-radius: 50px;
+}
+
+.popupimage1, .popupimage2, .popupimage3 {
+    height: 1250px;
+    width: 1000px;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+#content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#content1{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#demo-modal1{
+  max-height: 950px;
+  width:1025px;
+  background-color: transparent;
+}
+</style>
+{% endblock %}
+
+{% block map %}
+<div id="mapid" style="width: 100%; height: 100%;"></div>
+
+  <!-- Modal Structure -->
+  <div id="demo-modal" class="modal bottom-sheet"> 
+    <div id="content" class="modal-content"> 
+    </div> 
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      </div>
+</div> 
+
+<div id="demo-modal1" class="modal bottom-sheet"> 
+  <div class="modal-header" style="text-align: right;">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat" style="color: white; text-align: right; font-weight: bold; font-size: 20px;">X</a>
+  </div>
+  <div id="content1" class="modal-content"> 
+  </div> 
+  
+</div> 
+
+<script>
+
+    var mymap = L.map('mapid').setView([19.7515-1,75.7139-1], 4.5);
+    
+    var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+	var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr}),
+        streets  = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+        
+    // const url = 'https://geoserver2.communitygis.net/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=json&typename=geonode:diet_data8jan';
+    const url = 'https://geoserver2.communitygis.net/geoserver/ows?service=WFS&version=1.0.0&request=GetFeature&typename=geonode%3Aposhan_dummy&outputFormat=json&srs=EPSG%3A4326&srsName=EPSG%3A4326&access_token=3r7XCeWunHUOfoyqPxnUNt7XY7ZWHu'
+    const url1 = 'https://gist.githubusercontent.com/AnimeshN/bf517d5fd3cf387a73e49404037f1c4d/raw/15ae046fc379c62f63934b86b9dda97d8165d4d6/organization_wise_compendium.json'
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+    }).addTo(mymap);
+
+  
+
+  //  https://geoserver2.communitygis.net/geoserver/geonode/wms?service=WMS&version=1.1.0&request=GetMap&layers=geonode%3Astates_in_india&bbox=68.18624899229724%2C6.755952899606655%2C97.41529266802229%2C37.03475399043995&width=741&height=768&srs=EPSG%3A4326&styles=&format=application/openlayers
+   // L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+		//		layer: 'geonode:states_in_india',
+			//	format: 'image/png',
+				//transparent: 'true',
+			//}).addTo(mymap);
+    //console.log('l/tilelayer');
+   // putmap("geonode:states_in_india");
+
+   // function putmap(layer){
+    var wms = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+				//layer: layer,
+        layers: 'geonode:states_in_india',
+				format: 'image/png',
+				transparent: 'true',
+			});
+      wms.addTo(mymap);
+      //console.log(layers);
+      console.log(wms);
+   // }  
+      //layer.addTo(mymap);
+      
+
+    
+    //var baseLayers = {
+		//"Grayscale": grayscale,
+		//"Streets": streets
+    //};
+
+    //baselayers have radio buttons, thats why it is kept empty.
+      var baseLayers = {
+
+      };
+
+    let indiaState = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+            layers: "geonode:states_in_india",
+            format: "image/png",
+            transparent: "true",
+            tiled: "true",
+            opacity: 0.7,
+            }
+        );
+    let indiaDistrict = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:all_india_districts_11june2020",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+
+    let mahaHighways = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:osm_highways",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+
+    let mahaSchools = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:school_16_17_11april",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+
+	var overlays = {
+        //"States":indiaState,
+        "Districts":indiaDistrict,
+        "Maharashtra Highways":mahaHighways,
+        "Maharashtra Schools":mahaSchools
+	};
+
+	L.control.layers(baseLayers, overlays).addTo(mymap);
+
+    var pvIcon = L.icon({
+            iconUrl: "{% static 'map/images/pw_logo.png' %}",
+            iconSize:     [40, 40], // size of the icon
+            //shadowSize:   [50, 64], // size of the shadow
+            iconAnchor:   [25,10], // point of the icon which will correspond to marker's location
+            // shadowAnchor: [4, 62],  // the same for the shadow
+            popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+        });
+
+    // var geojsonMarkerOptions11 = {
+    //                 radius: 8,
+    //                 fillColor: "#8975fa",
+    //                 color: "#000",
+    //                 weight: 1,
+    //                 opacity: 1,
+    //                 fillOpacity: 0.8
+    //             };
+
+    // const onEachFeatureForPoint = (feature, layer) =>{
+    //     var str1 = " <img class = 'popupimage' src='/static/map/".concat(feature.properties.image);
+    //     var str2 = str1.concat("' alt='image not found'>");
+    //                     // layer.bindPopup(str2);
+
+    //     const table = `
+    //     <table class='striped centered'>
+    //     <thead>
+    //       <tr>
+    //           <th>Village Name</th>
+    //           <th>${feature.properties.village}</th>
+    //       </tr>
+    //     </thead>
+
+    //     <tbody>
+    //       <tr>
+    //         <td>Block</td>
+    //         <td>${feature.properties.block}</td>
+    //       </tr>
+
+    //       <tr>
+    //         <td>District</td>
+    //         <td>${feature.properties.district}</td>
+    //       </tr>
+
+    //       <tr>
+    //         <td>CFNS</td>
+    //         <td>${feature.properties.CFNS}</td>
+    //       </tr>
+
+    //       <tr>
+    //         <td>Utilization</td>
+    //         <td>${feature.properties.Utility}</td>
+    //       </tr>
+
+    //       <tr>
+    //         <td>Water Source</td>
+    //         <td>${feature.properties.WaterSrc}</td>
+    //       </tr>
+
+    //       <tr>
+    //         <td>Crop Pattern</td>
+    //         <td>${feature.properties.croppatten}</td>
+    //       </tr>
+
+    //     </tbody>
+    //   </table><br>
+    //   `
+    //     layer.on("click",e => {
+    //         document.getElementById("content").innerHTML = str2 + table;
+    //         var elem = document.getElementById('demo-modal');
+    //         var instance = M.Modal.getInstance(elem);
+    //         instance.open();
+
+    //     })
+    // }
+
+    // fetch(url).then(res => {
+    //     res.json().then(
+    //         function(geojsonData) {
+    //             poshanvatika = L.geoJson(geojsonData.features, {
+    //             pointToLayer: function(feature, latlng) {
+    //                     return L.marker(latlng, {icon:pvIcon});
+    //             },
+    //             onEachFeature: onEachFeatureForPoint,
+    //         }).addTo(mymap);
+    //     })
+    // });
+
+//wells
+    // var wellIcon = L.icon({
+    //         iconUrl: "{% static 'map/images/well.png' %}",
+    //         iconSize:     [30, 40], // size of the icon
+    //         //shadowSize:   [50, 64], // size of the shadow
+    //         iconAnchor:   [25,10], // point of the icon which will correspond to marker's location
+    //         // shadowAnchor: [4, 62],  // the same for the shadow
+    //         popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+    //     });
+    
+        
+    const onEachFeatureForPoint1 = (feature, layer) =>{
+        let img_name = feature.properties.img1.split(".")[0] + ".jpg";
+        var str3 = " <img class = 'popupimage1' src='/static/map/cmp_images/".concat(img_name);
+        var str4 = str3.concat("' alt='image not found'></br>");
+        if(feature.properties.img2!=''){
+        // let img_name1 = feature.properties.img2.split(".")[0] + ".jpg";
+
+        var str5 = " <img class = 'popupimage2' src='/static/map/cmp_images/".concat(feature.properties.img2);
+        var str6 = str5.concat("' alt='image not found'></br>");}
+        else{str6=""}
+        if(feature.properties.img3!=''){
+        // let img_name2 = feature.properties.img3.split(".")[0] + ".jpg";
+
+        var str7 = " <img class = 'popupimage3' src='/static/map/cmp_images/".concat(feature.properties.img3);
+        var str8 = str5.concat("' alt='image not found'> </br>");}
+        else{str8=""}
+
+                        // layer.bindPopup(str2);
+
+        const table1 = `
+        
+        </br></br><table class='striped centered' style="background-color:beige;">
+        <thead>
+          <tr>
+              <th>Place</th>
+              <th>${feature.properties.Name}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Organization Name</td>
+            <td>${feature.properties.Organisati}</td>
+          </tr>
+
+        </tbody>
+      </table> </br>
+      `
+    
+        layer.on("click",e => {
+          if(str6 ==''&& str8 ==''){
+            document.getElementById("content1").innerHTML = table1 + str4;}
+            else if(str8==''){
+            document.getElementById("content1").innerHTML = table1 + str4 + str6 ;}
+            else{
+              document.getElementById("content1").innerHTML = table1 + str4 + str6 + str8;}
+            var elem1 = document.getElementById('demo-modal1');
+            var instance1 = M.Modal.getInstance(elem1);
+            instance1.open();
+
+        })
+    }
+
+    fetch(url1).then(res => {
+        res.json().then(
+            function(geojsonData) {
+                compendium = L.geoJson(geojsonData.features, {
+                pointToLayer: function(feature, latlng) {
+                        return L.marker(latlng, {icon:pvIcon});
+                },
+                onEachFeature: onEachFeatureForPoint1,
+            }).addTo(mymap);
+        })
+    });
+
+</script>
+
+
+
+<!-- 
+{% for i in datas %}
+
+  <script>
+
+var table2 = 
+        
+        `<table class="striped centered" style="background-color:beige; font-size:12px;">
+        <thead>
+          <tr>
+              <th>Well name</th>
+              <th>{{ i.wellnm }}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Radius</td>
+            <td>{{ i.radius }} mtr</td>
+          </tr>
+
+          <tr>
+            <td>Depth</td>
+            <td>{{ i.depth }} mtr</td>
+          </tr>
+
+          <tr>
+            <td>Level</td>
+            <td>{{ i.level }} mtr</td>
+          </tr>
+        </tbody>
+      </table>
+      </br>`
+      
+       var marker = L.marker(["{{ i.lat }}", "{{ i.lng }}"], {icon:wellIcon}).addTo(mymap).bindPopup(table2);
+   </script>
+
+
+                  {% endfor %} -->
+         
+    
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {opacity:.3});
+});
+
+</script>
+{% endblock map%}

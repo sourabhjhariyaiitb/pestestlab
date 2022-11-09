@@ -1,0 +1,610 @@
+{% extends 'map/base.html' %}
+{% include 'map/base_map.html'%}
+{% load static %}
+{% block content %}
+{% block extra_resources%}
+<head>
+    <link type="text/css" href="{% static 'home/css/materialize.min.css' %}" rel="stylesheet">
+    <script type="text/javascript" src="{% static 'home/js/materialize.min.js' %}"></script>
+  
+</head>
+<style>
+
+
+#pv label {
+    display: block;
+    text-align: left;
+    margin: 10px;
+}
+
+     .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+table, th, td 
+    {
+        border-bottom: 1px solid #ddd;
+        border-collapse: collapse;
+        padding: 2px 3px;
+        text-align: center;
+    }
+    th {
+        font-weight:bold;
+    }
+
+    .legend {
+    line-height: 18px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.attribute_table {
+    line-height: 18px;
+    color: #555;
+}
+
+.select {
+        background-color: rgb(116, 109, 109);
+        width: 40%;
+        margin-left: 100px;
+        ;
+        color: white;
+    }
+    
+    .select.highlight {
+        background: rgb(0, 0, 0);
+        color: white;
+    }
+
+
+    .popupimage {
+    height: 200px;
+    width: 300px;
+    overflow: hidden;
+    border-radius: 50px;
+}
+
+.popupimage1, .popupimage2, .popupimage3 {
+    height: 1250px;
+    width: 1000px;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+#content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#content1{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#demo-modal1{
+  max-height: 950px;
+  width:1025px;
+  background-color: transparent;
+}    
+
+</style>
+{% endblock %}
+
+
+
+<div id="side-bar" style="background-color: rgba(223, 217, 217, 0.952);">                <!-- Main container -->
+
+    <!-- <a class="nav-link" href="{% url 'treecharts' %}">Charts<span class="sr-only">(current)</span></a> -->
+    <br>
+    <a class="nav-link" href="https://ee.kobotoolbox.org/x/KCR9XYmc" style="color: black;"><b><u>Form</u></b><span class="sr-only">(current)</span></a>
+    <br>
+    <hr>
+    <br>
+    <!--Creating div for navigated area view-->
+   <h5>Pune Tree Census</h5>
+    <div class="tooltips" title="Please select the PV" id="pv">
+        
+        <label><input type="checkbox" value="dehuEB" id ="dehuEB" onchange="getPoshan(this)"><span style="color:black;"><b> Show Dehu EB </b></span></label>
+                         
+  </div>
+  <div class="tooltips" title="Please select the PV" id="pv">
+        
+    <label><input type="checkbox" value="sataraEB" id ="sataraEB" onchange="getPoshan(this)"><span style="color:black;"><b> Show Satara EB ({{ tree_count_satara }})</b></span></label>
+                     
+  </div>
+  <div class="tooltips" title="Please select the PV" id="pv">
+        
+    <label><input type="checkbox" value="nateputeEB" id ="nateputeEB" onchange="getPoshan(this)"><span style="color:black;"><b> Show Natepute EB ({{ tree_count_natepute }})</b></span></label>
+                     
+  </div>
+<hr>
+  <h6><b>Last Updated few hours back(on 22March2022)</b></h6>
+  <!-- <button type="button" onclick="{{ tree_count }}">Total Count</button> -->
+  <h6 style ="line-height: 2.0;"> Total Tree Count : {{ tree_count }} </h6>
+  <!-- <h6 style ="line-height: 2.0;"> Satara Tree Count : {{ tree_count_satara }} </h6> -->
+  <!-- <h6 style ="line-height: 2.0;"> Natepute Tree Count : {{ tree_count_natepute }} </h6> -->
+</div>
+<script>
+
+    
+
+//add Pune boundary to map
+// var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+//                                         layers: 'geonode:all_india_districts_11june2020',
+//                                         format: 'image/png',
+//                                         transparent: 'true',
+//                                         //tiled: true,
+//                                         cql_filter: `district='Pune'`, 
+//                                         //opacity:0.5,
+//                                         // version: '1.3.0',
+                                        
+//                                     }); 
+//         wms_layer.addTo(mymap);   
+
+
+
+    var list = [];
+
+function getPoshan(clickedCheckBox){
+    let value = clickedCheckBox.value;
+    //var state = document.getElementById('indstate').value;
+    //console.log(state);
+    console.log(value);
+    if ($(clickedCheckBox).is(':checked')) {
+        console.log("show vatika");
+        if(value == 'dehuEB'){
+            layer =  'treecensus:dehunagarblocks_22feb22';
+            currentPos = [18.7173, 73.7676];
+            zoom = 15;
+        }
+        else if(value == 'sataraEB'){
+            layer = 'treecensus:satarablocks_22feb22';
+            currentPos = [17.691401, 74.000938];
+            zoom = 14;
+            //TreeGroupSatara;
+            //list.push(TreeGroupSatara);
+          }
+        else if(value == 'nateputeEB'){
+            layer = 'treecensus:nateputebloxks_22feb22';
+            currentPos = [17.898615, 74.754189];
+            zoom = 14;
+            //TreeGroupNatepute;
+        }
+           
+        var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+                                        layers: layer,
+                                        format: 'image/png',
+                                        transparent: 'true',
+                                        //tiled: true,
+
+                                        //opacity:0.5,
+                                        // version: '1.3.0',
+                                        
+                                    }); 
+        wms_layer.addTo(mymap);
+
+        list.push(wms_layer);
+
+
+        mymap.setView(currentPos, zoom);                          
+        console.log(wms_layer);
+        }
+        // if(value == 'sataraEB'){
+        // var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+        //                                 layers: 'treecensus:satarablocks_22feb22',
+        //                                 format: 'image/png',
+        //                                 transparent: 'true',
+        //                                 //tiled: true,
+
+        //                                 //opacity:0.5,
+        //                                 // version: '1.3.0',
+                                        
+        //                             }); 
+        // wms_layer.addTo(mymap);                            
+        // console.log(wms_layer);
+        // }
+        // if(value == 'nateputeEB'){
+        // var wms_layer = L.tileLayer.wms('https://geoserver2.communitygis.net/geoserver/wms', {
+        //                                 layers: 'treecensus:nateputebloxks_22feb22',
+        //                                 format: 'image/png',
+        //                                 transparent: 'true',
+        //                                 //tiled: true,
+
+        //                                 //opacity:0.5,
+        //                                 // version: '1.3.0',
+                                        
+        //                             }); 
+        // wms_layer.addTo(mymap);                            
+        // console.log(wms_layer);
+        // }
+        
+
+
+    else {
+                console.log("not");
+                // list =[];
+                //mymap.removeLayer(compendium);
+                //console.log(TreeGroupSatara);
+                //mymap.removeLayer(TreeGroupSatara);
+                //TreeGroupSatara.removeLayer(marker);
+                //TreeGroupSatara.clearlayer();
+                list.forEach(wms_layer => mymap.removeLayer(wms_layer));
+                //list.forEach(TreeGroupSatara => mymap.removeLayer(TreeGroupSatara));
+                //TreeGroupSatara.forEach(marker =>mymap.removeLayer(marker));
+                
+
+                // console.log(list);
+            }
+            mymap.on('contextmenu', function(e) {
+             copyToClipboard(e.latlng.lat + "," + e.latlng.lng);
+             mymap.messagebox.show("<h6>Latitude:<b>" + round(e.latlng.lat, 4) + "</b> Longitude:<b>" + round(e.latlng.lng, 4) + "</b> copied to clipboard</h6>");
+            });
+            
+}
+function copyToClipboard(text) {
+        var dummy = document.createElement("textarea");
+        // dummy.style.display = 'none'
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+function removeposhan(){
+    $(chkposhan).prop( "checked", false );
+    getPoshan($(chkposhan));
+}
+
+
+</script>
+
+
+<!-- all trees -->
+<script>
+    //poshan
+    var logo = L.icon({
+           iconUrl: "{% static 'map/images/tree_icon.png' %}",
+           iconSize:     [40, 40], // size of the icon
+           //shadowSize:   [50, 64], // size of the shadow
+           iconAnchor:   [25,10], // point of the icon which will correspond to marker's location
+           // shadowAnchor: [4, 62],  // the same for the shadow
+           popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+       });
+  
+    var TreeGroup = L.layerGroup();
+  </script>
+  
+  
+  {% for i in tree %}
+   
+     <script>
+        //  alert("in vatikas -" +i+"- "+ +i.nutri_nm) 
+        //alert('hii');
+      var table4 = 
+           
+           `<table class="w3-table" id="popup" style="font-size:12px; align:center;" >
+             <tbody>
+           
+             {% if i.name_of_the_ulb %}
+             <tr>
+                 <th>ULB name</th>
+                 <th>{{ i.name_of_the_ulb}}</th>
+             </tr>
+             {% endif %}
+             
+             {% if i.tree_common_name %}
+             <tr>
+               <td>Tree common name</td>
+               <td>{{ i.tree_common_name}}</td>
+             </tr>
+             {% endif %}
+   
+             {% if i.date_of_plantation %}
+             <tr>
+               <td>date_of_plantation</td>
+               <td>{{ i.date_of_plantation }}</td>
+             </tr>
+             {% endif %}
+             
+           </tbody>
+      </table>
+      </br>`
+
+      //console.log(table4);
+         var popupOptions =
+          {
+            'maxWidth': '500',
+            'className' : 'another-popup' // classname for another popup
+          }
+          var marker = L.marker(["{{ i.tree_gps_location_latitude }}", "{{ i.tree_gps_location_longitude }}"], {icon:logo}).addTo(mymap).bindPopup(table4, popupOptions);
+          TreeGroup.addLayer(marker);
+          console.log(marker);
+          // Added  hover to open popups
+          marker.on('mouseover', function (e) {
+                this.openPopup(e.latlng);
+            });
+          marker.on('mouseout', function (e) {
+                this.openPopup(e.latlng);
+          });
+          marker.on('click', function (e) {
+                this.openPopup(e.latlng);
+          });
+  
+          mymap.on ({
+              click: function() {
+                  isClicked = false
+              },
+              popupclose: function () {
+                  isClicked = false
+              }
+          })
+      </script>
+  {% endfor %}
+
+
+<!-- show satara trees -->
+  <!-- <script>
+    //poshan
+    var logo = L.icon({
+           iconUrl: "{% static 'map/images/tree_icon.png' %}",
+           iconSize:     [40, 40], // size of the icon
+           //shadowSize:   [50, 64], // size of the shadow
+           iconAnchor:   [25,10], // point of the icon which will correspond to marker's location
+           // shadowAnchor: [4, 62],  // the same for the shadow
+           popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+       });
+  
+    var TreeGroupSatara = L.layerGroup();
+    console.log(TreeGroupSatara);
+  </script>
+
+
+
+  {% for i in tree_satara %}
+   
+  <script>
+     //  alert("in vatikas -" +i+"- "+ +i.nutri_nm) 
+     //alert('hii');
+   var table4 = 
+        
+        `<table class="w3-table" id="popup" style="font-size:12px; align:center;" >
+          <tbody>
+        
+          {% if i.name_of_the_ulb %}
+          <tr>
+              <th>ULB name</th>
+              <th>{{ i.name_of_the_ulb}}</th>
+          </tr>
+          {% endif %}
+          
+          {% if i.tree_common_name %}
+          <tr>
+            <td>Tree common name</td>
+            <td>{{ i.tree_common_name}}</td>
+          </tr>
+          {% endif %}
+
+          {% if i.date_of_plantation %}
+          <tr>
+            <td>date_of_plantation</td>
+            <td>{{ i.date_of_plantation }}</td>
+          </tr>
+          {% endif %}
+          
+        </tbody>
+   </table>
+   </br>`
+
+   //console.log(table4);
+      var popupOptions =
+       {
+         'maxWidth': '500',
+         'className' : 'another-popup' // classname for another popup
+       }
+       var marker = L.marker(["{{ i.tree_gps_location_latitude }}", "{{ i.tree_gps_location_longitude }}"], {icon:logo}).addTo(mymap).bindPopup(table4, popupOptions);
+       TreeGroupSatara.addLayer(marker);
+       //console.log(marker);
+       // Added  hover to open popups
+       marker.on('mouseover', function (e) {
+             this.openPopup(e.latlng);
+         });
+       marker.on('mouseout', function (e) {
+             this.openPopup(e.latlng);
+       });
+       marker.on('click', function (e) {
+             this.openPopup(e.latlng);
+       });
+
+       mymap.on ({
+           click: function() {
+               isClicked = false
+           },
+           popupclose: function () {
+               isClicked = false
+           }
+       })
+   </script>
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      var elems = document.querySelectorAll('.modal');
+      var instances = M.Modal.init(elems, {opacity:.3});
+    });
+  </script>
+  
+{% endfor %} -->
+
+<!-- show natepute trees -->
+<!-- <script>
+    //poshan
+    var logo = L.icon({
+           iconUrl: "{% static 'map/images/tree_icon.png' %}",
+           iconSize:     [40, 40], // size of the icon
+           //shadowSize:   [50, 64], // size of the shadow
+           iconAnchor:   [25,10], // point of the icon which will correspond to marker's location
+           // shadowAnchor: [4, 62],  // the same for the shadow
+           popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+       });
+  
+    var TreeGroupNatepute = L.layerGroup();
+  </script>
+
+
+
+  {% for i in tree_natepute %}
+   
+  <script>
+     //  alert("in vatikas -" +i+"- "+ +i.nutri_nm) 
+     //alert('hii');
+   var table4 = 
+        
+        `<table class="w3-table" id="popup" style="font-size:12px; align:center;" >
+          <tbody>
+        
+          {% if i.name_of_the_ulb %}
+          <tr>
+              <th>ULB name</th>
+              <th>{{ i.name_of_the_ulb}}</th>
+          </tr>
+          {% endif %}
+          
+          {% if i.tree_common_name %}
+          <tr>
+            <td>Tree common name</td>
+            <td>{{ i.tree_common_name}}</td>
+          </tr>
+          {% endif %}
+
+          {% if i.date_of_plantation %}
+          <tr>
+            <td>date_of_plantation</td>
+            <td>{{ i.date_of_plantation }}</td>
+          </tr>
+          {% endif %}
+          
+        </tbody>
+   </table>
+   </br>`
+
+   //console.log(table4);
+      var popupOptions =
+       {
+         'maxWidth': '500',
+         'className' : 'another-popup' // classname for another popup
+       }
+       var marker = L.marker(["{{ i.tree_gps_location_latitude }}", "{{ i.tree_gps_location_longitude }}"], {icon:logo}).addTo(mymap).bindPopup(table4, popupOptions);
+       TreeGroupNatepute.addLayer(marker);
+       console.log(marker);
+       // Added  hover to open popups
+       marker.on('mouseover', function (e) {
+             this.openPopup(e.latlng);
+         });
+       marker.on('mouseout', function (e) {
+             this.openPopup(e.latlng);
+       });
+       marker.on('click', function (e) {
+             this.openPopup(e.latlng);
+       });
+
+       mymap.on ({
+           click: function() {
+               isClicked = false
+           },
+           popupclose: function () {
+               isClicked = false
+           }
+       })
+       
+
+   </script>
+{% endfor %} -->
+  
+
+
+<script>
+var baseLayers = {};
+    let indiaState = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+            layers: "geonode:states_in_india",
+            format: "image/png",
+            transparent: "true",
+            tiled: "true",
+            opacity: 0.7,
+            }
+        );
+    let indiaDistrict = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:all_india_districts_11june2020",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+
+    let mahaHighways = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:osm_highways",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+
+    let mahaSchools = L.tileLayer.wms("https://geoserver2.communitygis.net/geoserver/wms", {
+        layers: "geonode:school_16_17_11april",
+        format: "image/png",
+        transparent: "true",
+        tiled: "true",
+        opacity: 0.7,
+        }
+    );
+  var overlays = {
+        //"States":indiaState,
+        "Districts":indiaDistrict,
+        "Maharashtra Highways":mahaHighways,
+        "Maharashtra Schools":mahaSchools,
+        "Tree": TreeGroup,
+        //"SataraTree":TreeGroupSatara
+
+        // "PoshanVatikas": poshanlayerGroup,
+
+        // "AFIF": poshanlayerGroup3,
+        // "Self Consumption Vatiaks":selfconvatikaslayerGroup,
+        // "Selling Surplus Vatikas":sellsurpluslayerGroup
+	};
+
+	L.control.layers(baseLayers, overlays).addTo(mymap);
+  //L.control.layers(overlays).addTo(mymap);
+
+document.addEventListener('DOMContentLoaded', () => {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {opacity:.3});
+});
+
+</script>
+       
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, {opacity:.3});
+  });
+</script>
+
+
+{% endblock %}
+

@@ -1,0 +1,144 @@
+{% load static %}
+<html>
+<head>
+    <style>
+    body {
+        background-color: aliceblue;
+    }
+    h3 {
+        color :rgb(13, 163, 63)
+    }
+    table, th, td {
+      border: 1px solid;
+    }
+    
+    table {
+      width: 100%;
+    }
+    </style>
+</head>
+<body>
+    <h1 style="margin-top: 0%;margin-bottom: 0%;margin-left: 33%; color:rgb(13, 163, 63);">Tree Census - Pune Division</h1>
+    <br>
+    <br>
+    <!-- <div> 
+        <h3>Types of indegenious trees in each City</h3>
+        <img src="{% static 'charts/indegenious-city.png' %}" alt="My image">
+    </div>
+
+    <div>
+        <h3>Total area in sq-kms under each type of Tree</h3>
+        <img src="{% static 'charts/tree-area.png' %}" alt="My image">
+    </div>
+
+    <div>
+        <h3>Types of trees in each City</h3>
+        <img src="{% static 'charts/tree-city.png' %}" alt="My image">
+    </div> -->
+    <br>
+    <br>
+    <table>
+        <caption>Table 1 - Number of trees distributed according their type</caption>
+        <tr>
+            <th>Location/Type of Tree</th>
+            <th>Number of Trees</th>
+        </tr>
+        <tr>
+            <td>Heritage trees (age of tree greater than 50 years)</td>
+            <td>{{heritage_trees}}</td>
+        </tr>
+        <tr>
+            <td>Newly Planted trees (age of tree below 10 years)</td>
+            <td>{{newly_planted_trees}}</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table>
+        <caption>Table 2 - All ULBs</caption>
+        <tr>
+            <th>Type of tree</th>
+            <th>Number of Trees</th>
+        </tr>
+        <tr>
+            <td>All trees</td>
+            <td>{{ total_trees }}</td>
+        </tr>
+        <tr>
+            <td>Indegenious trees</td>
+            <td>{{total_indegenious_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Government land</td>
+            <td>{{govt_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Private land</td>
+            <td>{{private_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under other land ownership</td>
+            <td>{{other_trees}}</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table>
+        <caption>Table 3 - Satara ULB</caption>
+        <tr>
+            <th>Type of tree</th>
+            <th>Number of Trees</th>
+        </tr>
+        <tr>
+            <td>All trees</td>
+            <td>{{ satara_total_trees }}</td>
+        </tr>
+        <tr>
+            <td>Indegenious trees</td>
+            <td>{{satara_total_indegenious_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Government land</td>
+            <td>{{satara_govt_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Private land</td>
+            <td>{{satara_private_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under other land ownership</td>
+            <td>{{satara_other_trees}}</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <table>
+        <caption>Table 4 - Natepute ULB</caption>
+        <tr>
+            <th>Type of tree</th>
+            <th>Number of Trees</th>
+        </tr>
+        <tr>
+            <td>All trees</td>
+            <td>{{ natepute_total_trees }}</td>
+        </tr>
+        <tr>
+            <td>Indegenious trees</td>
+            <td>{{natepute_total_indegenious_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Government land</td>
+            <td>{{natepute_govt_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under Private land</td>
+            <td>{{natepute_private_trees}}</td>
+        </tr>
+        <tr>
+            <td>Trees under other land ownership</td>
+            <td>{{natepute_other_trees}}</td>
+        </tr>
+    </table>
+</body>
+
+</html>

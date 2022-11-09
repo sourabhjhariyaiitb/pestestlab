@@ -1,0 +1,29 @@
+{% extends 'home/base.html' %}
+{% load bootstrap4 %}      
+{% bootstrap_css %}       
+{% bootstrap_javascript jquery='full' %}  
+{{ form.media }}            
+{% block content %}
+{% load static %} 
+<style>
+select{display: block;padding: 0px;} 
+</style>
+    <form  method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    <div class="container">
+	  	<div class="section"></div>
+         <main>
+         <div class="container">
+         <div class="z-depth-3 y-depth-3 x-depth-3 grey  lighten-4 row" style="padding:20px;border: 1px;">
+         <h3 class="heading" style="text-align: center;"><b>Output Indicators Form</b></h3>
+         <table border="1">
+           {{  form.as_table }}
+        </br> </table><br>
+          <div class="form-field" style="margin-bottom: 10px ;text-align:center;">
+              <button class="login-btn btn-large waves-effect waves-dark">Submit</button>
+          </div>
+          </div>
+        </main>
+    </form>    
+{% endblock %}
+ 

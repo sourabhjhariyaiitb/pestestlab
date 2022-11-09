@@ -1,0 +1,213 @@
+{% extends 'home/base.html'%}
+{% block content %}
+{% load static%} 
+<style>
+select{display: block;padding: 0px;} 
+
+</style>
+   
+    <form  method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+    <div class="container">
+	<div class="row">
+	<div class="section"></div>
+   <main>
+     <div class="container">
+    <div  class="z-depth-3 y-depth-3 x-depth-3 grey  lighten-4 row" style="padding:20px;border: 1px;">
+        
+        
+          <h3 class="heading" style="text-align: center;"><b>Nutrition Garden Information </b></h3>
+      
+            <div class='row'>
+              <div class='input-field col s12'>
+               <span style="float: left; color: black;">Village Name : </span>
+               <input type="text" class="fieldlabels" placeholder="Village Name" name="village" id="village">
+                
+              </div>
+            </div>
+            <div class='row' >
+              <div class='input-field col s12'>
+                <span style="float: left; color: black;">Pincode : </span>
+                <input type="text" class="fieldlabels" placeholder="Pincode" name="pincode" id="pincode "> 
+              </div>
+             
+            </div>
+            <div class='row' >
+             
+              <div class='input-field col s12'>
+                <span style="float: left; color: black; height: 3rem;">Nutri-Garden Type : </span>
+                <select name = "nutrigardentype">
+                  <option value="" selected>Choose Your Option</option>
+                  <option value="Organic">Organic</option>
+                  <option value="Use Organic ">Use Organic Fertilizers</option>
+                  
+                </select>
+                </div>
+             
+            </div>
+            <div class='row' >
+             
+              <div class='input-field col s12'>
+                <span style="float: left; color: black; height: 3rem;">Approximate Size :</span>
+                <select name="size">
+                  <option value="" selected>Choose your option</option>
+                  <option value="50 to 100 sq.ft">50 to 100 sq.ft </option>
+                  <option value="100 to 150 sq.ft">100 to 150 sq.ft</option>
+                  <option value="150 to 200 sq.ft">150 to 200 sq.ft</option>
+                  <option value="200 to 250 sq.ft">200 to 250 sq.ft</option>
+                  <option value="less than 250 sq.f">less than 250 sq.ft</option>
+                </select>
+                </div>        
+            
+            <div class='row' >
+              <div class='input-field col s12'>
+                <span style="float: left; color: black; height: 3rem;">Used For :</span>
+                <select name = "use">
+                  <option value="" selected>Choose your option</option>
+                  <option value="self-consumption">Self-Consumption </option>
+                  <option value="sale-of-vegetable">Sale of Vegetables</option>
+                </select>
+                </div>
+              </div>          
+            <div class='row' >
+               <div class='input-field col s12'>
+                <span style="float: left; color: black; height: 3rem;">Varieties :</span>
+                <select name="varieties">
+                  <option value="" selected>Choose your option</option>
+                  <option value="0-5 varieties">0-5 varieties</option>
+                  <option value="6-10 varieties">6-10 varieties</option>
+                  <option value="11-15 varieties">11-15 varieties</option>
+                  <option value="more than 15 varieties">more than 15 varieties</option>   
+                </select>
+                </div>
+            </div>
+        </div>
+        <div class='row'>
+          <div class='input-field col s12'>
+           <span style="float: left; color: black;">Is it having back-yard poultry/fishery?  </span>
+          
+           <p style="display: inline;"><label><input class="with-gap" name="backyard" type="radio" id = "backyardyes"value = "yes" /><span>Yes</span></label></p>
+            <p style="display: inline;"><label><input  class="with-gap" name="backyard" type="radio" id = "backyardno" value = "no" ><span>No</span></label></p>
+          
+          </div>
+        </div>
+        
+
+            <div class="row">    
+              <div id="backyardtext" style="display:none" class="input-field col s12" >
+              <span style="float:left; color: black; height: 3rem;" >Will you like to have a poultry/fishery unit? </span>
+              <p style="float: left; margin-right: 20px;"><label><input class="with-gap" name="unit" type="radio" id = "byes"value = "yes" /><span>Yes</span></label></p>
+              
+              <p style="float: left;"><label><input  class="with-gap" name="unit" type="radio" id = "bno" value = "no"><span>No</span></label></p>
+               
+              </div>
+              </div>
+            <div class='row' >
+              <div class='input-field col s12'>
+               <span style="float: left; color: black; height: 3rem;">Seed Providers :</span>
+               <select name = "seed">
+                <option value="" selected>Choose your option</option>
+                <option value="own">Own</option>
+                <option value="local farmers">Local Farmers</option>
+                <option value="local vendors">Local Vendors</option>
+                <option value="shg">SHGs</option>
+                <option value="others">Others</option>
+
+              </select>
+               </div>
+           </div>
+           <div class='row'>
+            <div class='input-field col s12'>
+             <span style="float: left; color: black;">Number of Nutri-Garden in the Village : </span>
+             <input type="number" class="fieldlabels" placeholder="Village Number"  name="nutrigardennumber" id="village">            </div>
+          </div>
+          <div class='row'>
+            <div class='input-field col s12'>
+             <span style="float: left; color: black;">How many are Organic ?  </span>
+             <input type="number" class="fieldlabels" placeholder="Organic"  name="organic" id="organic">
+              
+            </div>
+          </div>
+          <div class='row'>
+            <div class='input-field col s12'>
+             <span style="float: left; color: black; height: 3rem;"> Technical and Training Support :</span>
+             <select name="training">
+              <option value="" selected>Choose your option</option>
+              <option value="trust">Trust </option>
+              <option value="sale-">Others</option>
+            </select>
+              
+            </div>
+          </div>
+          <div class="row">
+          <div  class="input-field col s12">
+              
+            <span style="float: left; color: black; height: 3rem;">Do you have any villages which fall under the criteria of Anemia Free Villages ?</span>
+            <p style="float: left; margin-right: 20px;"><label><input class="with-gap" name="afvillage" type="radio" id = "chkyes"value = "yes" /><span>Yes</span></label></p>
+            <p style="float: left;"><label><input  class="with-gap" name="afvillage" type="radio" id = "chkno" value = "no" ><span>No</span></label></p>
+            </div>
+          </div>        
+        
+        <div id="text" style="display:none" class="row input-field col s12" >
+          <span style="float:left;color: black; height: 3rem;">Villages fall under the criteria of Anemia free village ? </span>
+          <div class="input-field col s12">
+          <span style="float: left; color: black; height: 3rem;">Name of Village :</span>
+          <input type="text" class="fieldlabels" placeholder="Village Name" name="villagename" id="village"> <br>
+          <span style="float: left; color: black; height: 3rem;">Number of Villages :</span>
+          <input type="text" class="fieldlabels" placeholder="Village Number" name="villagenumber" id="village">    
+        </div>
+
+         
+        </div>
+        
+          <div class='input-field col s12'>
+           <span style="float: left; color: black; height: 3rem;">Are you promoting community kitchen gardens in your intervention area? </span>
+           <p style="float: left; margin-right: 20px;"><label><input class="with-gap" name="promote" type="radio" /><span>Yes</span></label></p>
+           <p style="float: left;"><label><input  class="with-gap" name="promote" type="radio" id = ""><span>No</span></label></p>
+            
+          
+        
+      </div>
+            <br/>
+            <div class="form-field" style="margin-bottom: 10px ;text-align:center;">
+              <button class="login-btn btn-large waves-effect waves-dark">Submit</button>
+          </div>
+                </div>
+     
+        </div>
+       </div>
+      </main>
+
+  
+	</div>
+</div>
+  
+
+
+
+
+       
+    </form>
+   
+<script>
+
+$(function() {
+   $("input[name='afvillage']").click(function() {
+     if ($("#chkyes").is(":checked")) {
+       $("#text").show();
+     } else {
+       $("#text").hide();
+     }
+   });
+ });
+ $(function() {
+   $("input[name='backyard']").click(function() {
+     if ($("#backyardno").is(":checked")) {
+       $("#backyardtext").show();
+     } else {
+       $("#backyardtext").hide();
+     }
+   });
+ });
+</script>
+{% endblock %}
